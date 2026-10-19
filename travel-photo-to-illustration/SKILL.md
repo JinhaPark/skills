@@ -16,7 +16,7 @@ description: Clean travel photographs, convert them to watercolor or colored-pen
 
 ## 캐시와 여러 이미지 처리
 
-[cache-and-parallel.md](references/cache-and-parallel.md)를 먼저 읽고 원본→수정 revision→게시 변형의 영속 대응표와 두 단계 캐시를 적용하라. 기존 결과를 조회한 뒤 미처리 독립 이미지가 여러 장이면 비동기 서브에이전트로 병렬 할당하라. 부모는 공용 파일의 단독 작성자로서 결과를 검증·통합하라. 같은 이미지의 연속 수정은 순서를 지키고 이전 revision을 보존하라.
+[cache-and-parallel.md](references/cache-and-parallel.md)를 먼저 읽고 원본→수정 revision→게시 변형의 영속 대응표와 두 단계 캐시를 적용하라. 기존 결과를 조회한 뒤 미처리 독립 이미지가 여러 장이면 비동기 서브에이전트로 병렬 할당하라. 부모는 공용 파일의 단독 작성자로서 결과를 검증·통합하라. 같은 이미지의 연속 수정은 순서를 지키고 이전 revision을 보존하라. 이미지 등록·교체·사용 중단·삭제는 저장소 오케스트레이션 에이전트가 단독 관리하고 참조 문서의 CRUD 수명주기를 따르라. 원본은 업로드하지 말고 처리 시 해시만 기록하라.
 
 ## 2. 정리와 화풍 계획
 
