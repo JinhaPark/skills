@@ -17,8 +17,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Run DCF regression tests from repository root
-        run: python -m unittest discover -s distress-adjusted-dcf/tests -v
+        run: python -m unittest discover -s discover-value-stocks/subskills/data/distress-adjusted-dcf/tests -v
       - name: Run research workflow and dashboard tests
-        run: python -m unittest discover -s research-cashflow-value/tests -v
+        run: python -m unittest discover -s discover-value-stocks/tests -v
       - name: Check README dashboard matches the public record
-        run: python research-cashflow-value/scripts/render_dashboard.py data/cashflow-dashboard.json README.md --check
+        run: python discover-value-stocks/scripts/render_dashboard.py discover-value-stocks/subskills/data/cashflow-dashboard.json discover-value-stocks/subskills/data/README.md --check
