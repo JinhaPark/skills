@@ -1,0 +1,4 @@
+interface:
+  display_name: "Discover Value Stocks"
+  short_description: "Research equities with caching and independent reflection"
+  default_prompt: "Use $discover-value-stocks to research a growth industry and deliver one verified Korean report with cached stages, historical assessment, independent reflection, and tested next-run improvements."
