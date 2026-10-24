@@ -53,3 +53,20 @@ python -m unittest discover -s subskills/data/distress-adjusted-dcf/tests -v
 python -m unittest discover -s tests -v
 python scripts/render_dashboard.py subskills/data/cashflow-dashboard.json subskills/data/README.md --check
 ```
+
+## Scoped work and deferred merge
+
+- Batch related small changes into one focused PR; reuse that PR for follow-ups to the same unfinished change. Reuse existing artifacts and validation evidence only when their inputs, relevant dependencies, tool versions, and check scope remain applicable; record the revision checked.
+- Before opening or updating a small-change PR, inspect the diff and run only checks needed for the affected files and behavior. Defer the complete test suite to an explicit user merge request. State checks run and deferred in the PR; never claim unperformed tests passed.
+- Keep the PR open until the user explicitly requests its merge. Do not enable auto-merge. A request for a previous change does not authorize this merge.
+- When merge is requested, refresh main and the PR head, resolve conflicts, run the complete repository test suite and required build/integration checks on the combined result, and merge only after they pass. Report unavailable checks or failures instead of merging an unverified result.
+- Skip unrelated full audits, repeated status polling, and extra image generation. Use a bounded status check when needed; repeat only for new evidence or an explicit request. These instructions do not disable existing CI or bypass required checks.
+- Interpret the following original user instruction subject to the deferred-merge rule above; “지정한 병합 단계” means stop at an open PR unless merge was explicitly requested:
+
+> 이번 요청 범위만 처리하세요. 기존 결과와 검증 기록을 재사용하고 변경된 부분만 확인하세요. 관련 없는 전체 감사, 반복 상태 조회, 추가 이미지 생성은 생략하세요. 필요한 검증을 마치면 지정한 병합 단계까지 진행하고 결과를 간결하게 보고하세요.
+
+## Efficient recurring work and modular skill graphs
+
+- Separate deterministic discovery and eligibility checks from model reasoning: compare canonical URLs, publication dates, source digests and delivery ledgers in code; research and summarize only verified new or changed eligible material. No notification does not mean no model usage. Access failure is not evidence of no new material.
+- Reuse unchanged reviewed Markdown, research artifacts and models after checking integrity, freshness and provenance. Never bypass delivery checkpoints, reconciliation, or publication approval. This policy does not itself change schedules or deploy a new monitoring system.
+- Keep skills modular. Load only resources required by ready graph nodes, pass scoped artifacts to workers, and invalidate changed nodes plus their transitive dependents. Reuse unaffected accepted nodes after validity checks; retain mandatory independent review and release gates. Parallel agents reduce elapsed time, not necessarily credits.
