@@ -42,9 +42,13 @@ description: Assemble reviewed sections into one complete Korean Markdown invest
 - Do not post to JinhaPark/news, mix AI-news feeds, create Discord routing, or claim chat relocation.
 - Do not present scattered partial sections as the requested final deliverable.
 - During assembly, freeze `recommendation.json` using the assessment policy/template,
-  with original judgment, price basis, target dates, scenarios, benchmark and thesis
+  with original judgment, proposed entry, explicit TP/SL/Horizon (N/A plus reasons
+  when absent), price basis, target dates, scenarios, benchmark and thesis
   triggers. Link it to the exact report hash and invocation commit. For no_selection
   record that status without inventing a stock recommendation.
+- Save the exact four cover paragraphs as `cover.md`; freeze its path/hash and a
+  faithful English summary of at most 50 words in recommendation.cover_letter.
+  Keep that text present verbatim in report.md and include cover.md in reflection.
 - Then obtain independent reflection on both the complete assembled report and
   recommendation, including opening table and cover, and pass the lifecycle release
   gate. A changed report or recommendation invalidates its reflection approval;
@@ -55,7 +59,9 @@ description: Assemble reviewed sections into one complete Korean Markdown invest
 - Confirm actual artifact availability and supported delivery before ledger completion.
 - Link the immutable recommendation to the observed publication receipt. Keep
   corrections as new versioned records; never rewrite the original forecast.
-- Return cache and delivery receipts to the reflection owner for closeout. The
+- After confirmed delivery, hand frozen terms and the receipt to update-dashboard;
+  it is the only publisher authorized to update the two public dashboard paths.
+- Return cache, dashboard and delivery receipts to the reflection owner for closeout. The
   current report remains frozen while any improvement candidate is evaluated.
 - Distinguish selected-company publication, no-selection report, blocked run, and interrupted delivery.
 - Do not add unconfirmed attempts to the completed-company exclusion set.

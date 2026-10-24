@@ -1,6 +1,6 @@
 # Stage artifacts and handoffs
 
-Use one run directory per report. Resolve its persistent storage reference during planning and record the actual retrieval method/URI, never an invented Library ID. The reusable skill contains no live run state. Never commit private research, cache, publication or assessment state into the skill repository. The authorized evolution stage may commit reviewed workflow code and synthetic regression fixtures only.
+Use one run directory per report. Resolve its persistent storage reference during planning and record the actual retrieval method/URI, never an invented Library ID. The reusable skill contains no live run state. Never commit private research, cache, publication or assessment state into the skill repository. The user-authorized exception is the reviewed public summary in root README.md and data/cashflow-dashboard.json, owned by update-dashboard. The authorized evolution stage may commit reviewed workflow code and synthetic regression fixtures only.
 
 ## Ownership and evidence
 
@@ -58,3 +58,5 @@ reflection/closeout.json and evolution/decision.json using their documented
 contracts. Keep actual role IDs and invocation provenance; summaries never claim
 independence in place of runtime agent evidence. Evolution may be deferred;
 publication must not falsely imply the skill was successfully updated.
+
+Dashboard is a lifecycle stage after accepted historical assessment and the current delivery outcome. Record its actual commit or pending failure separately from report delivery, and checkpoint it before reflection closeout. Historical updates still run after a blocked current report; never add an undelivered candidate.

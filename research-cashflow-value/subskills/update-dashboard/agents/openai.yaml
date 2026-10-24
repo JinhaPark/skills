@@ -1,0 +1,4 @@
+interface:
+  display_name: "Update Investment Dashboard"
+  short_description: "Publish frozen investment terms and outcome reviews"
+  default_prompt: "Use $update-dashboard to update the README investment dashboard from verified publications and assessments."

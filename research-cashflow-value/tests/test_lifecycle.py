@@ -18,9 +18,13 @@ class LifecycleTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.manifest = {'schema_version':1, 'run_id':'fixture', 'repository_commit':'a'*40, 'decision':'selected', 'versions':{'data':1,'model':1}}
         self.write('manifest.json', self.manifest)
-        (self.root/'report.md').write_text('A complete synthetic report fixture.\n')
+        cover='Growth supports demand.\n\nPeers convert cash differently.\n\nValuation supports watching the price.\n\nMargin weakness would challenge the thesis.'
+        (self.root/'cover.md').write_text(cover+'\n')
+        (self.root/'report.md').write_text('# Synthetic report\n\n'+cover+'\n\nA complete synthetic report fixture.\n')
         self.recommendation = {'schema_version':1, 'report_id':'report-1', 'entity_id':'synthetic-entity', 'skill_commit':'a'*40, 'publication_status':'ready', 'publication_at':None, 'report_reference':None, 'frozen_report_sha256':gate.digest(self.root/'report.md'), 'recommendation':'watch', 'entry':{'value':100}, 'target_horizon':{'end_date':'2027-10-24','exchange_timezone':'America/New_York','market_close_rule':'first_session_on_or_after'}}
         self.recommendation.update(original_snapshot_available=True,base_currency='USD',entry_convention='publication_reference',entry={'value':100,'observed_at':'2026-10-23T16:00:00-04:00','currency':'USD','basis':'split_adjusted_ex_dividend','share_basis':'entry-share','fx_to_base':1,'source_refs':['fixture:price']},return_convention={'dividends':'cash_received_not_reinvested','tax':'pre_tax','fx':'actual_receipt_date_for_distributions','terminal_proceeds':'hold_cash_without_interest_to_original_horizon'},benchmark={'entity':'industry-index'},expected_return=None,thesis_narrative='Cash conversion will improve.',thesis_criteria=[{'id':'fcf-threshold','metric_id':'normalized-fcf','period_end':'2027-06-30','unit':'USD million','currency':'USD','trigger_operator':'<','trigger_threshold':80}],unavailable_fields=[{'field':'expected_return','reason':'No single probability-weighted expected return; conditional scenarios are preserved.'}])
+        self.recommendation.update(barrier_basis={'currency':'USD','price_basis':'split_adjusted_ex_dividend','share_basis':'entry-share'},target_entry={'value':95,'currency':'USD','na_reason':None},take_profit={'value':125,'currency':'USD','na_reason':None},stop_loss={'value':None,'currency':None,'na_reason':'No price-based stop was specified.'})
+        self.recommendation['cover_letter']={'path':'cover.md','sha256':gate.digest(self.root/'cover.md'),'summary':'Growth and cash conversion support further research, while valuation and margins determine the decision.'}
         self.write('recommendation.json', self.recommendation)
         self.ledger={'publications':[{'publication_key':'legacy:HP-Inc:2026-10-24','report_id':None,'status':'delivered','provenance':'user_provided'}],'coverage_complete':True,'coverage_gap_reason':None}
         self.write('assessment/ledger-snapshot.json', self.ledger)
@@ -30,7 +34,7 @@ class LifecycleTests(unittest.TestCase):
         self.reflection.update(run_id='fixture',status='completed',reviewer_id='reflector',editor_id='editor',author_ids=['author-1'],trace_reference='fixture-trace:reflection',input_versions={'data':1,'model':1},unresolved_critical=0,publication_gate='passed',assessment_reference='assessment/track-record.json',assessment_sha256=gate.digest(self.root/'assessment/track-record.json'),assessment_unavailable_reason=None)
         for dimension in self.reflection['dimensions'].values():
             dimension.update(status='pass',evidence_references=['fixture-evidence'],limitations=[])
-        self.reflection['reviewed_artifacts'] = [{'path':p,'sha256':gate.digest(self.root/p)} for p in ('report.md','recommendation.json')]
+        self.reflection['reviewed_artifacts'] = [{'path':p,'sha256':gate.digest(self.root/p)} for p in ('report.md','recommendation.json','cover.md')]
         self.closeout = copy.deepcopy(self.reflection)
         self.closeout.update(checkpoint='closeout',run_outcome='delivered',run_outcome_evidence_reference='fixture:delivery',cache_status={'status':'persisted','receipt_references':['fixture:cache'],'uncovered_artifacts':[]},delivery_status={'status':'delivered','receipt_references':['fixture:delivery']},backlog=[],next_run_handoff={})
         self.closeout.pop('publication_gate')
@@ -67,6 +71,85 @@ class LifecycleTests(unittest.TestCase):
             self.write(path,evidence)
             check.update(evidence_reference=path,evidence_sha256=gate.digest(self.root/path))
         self.evolution['peer_assessment'].update(status='approved',evidence_references=['fixture:peer'],unresolved_material_concerns=[],justification='Evidence supports scoped change')
+
+    def save_recommendation(self):
+        self.write('recommendation.json',self.recommendation)
+        self.reflection['reviewed_artifacts'][1]['sha256']=gate.digest(self.root/'recommendation.json')
+
+    def test_explicit_na_targets_and_period_are_publishable(self):
+        for field in ('target_entry','take_profit','stop_loss'):
+            self.recommendation[field]={'value':None,'currency':None,'na_reason':'Original policy did not specify this term.'}
+        self.recommendation['target_horizon']={'end_date':None,'reason':'No investment-period endpoint specified.'}
+        self.save_recommendation()
+        self.assertEqual(self.check(),[])
+
+    def test_missing_target_or_na_reason_blocks(self):
+        self.recommendation.pop('take_profit')
+        self.save_recommendation()
+        self.assertTrue(any('take_profit' in error for error in self.check()))
+        self.recommendation['take_profit']={'value':None,'currency':None,'na_reason':None}
+        self.recommendation['target_horizon']={'end_date':None,'reason':None}
+        self.save_recommendation()
+        result=self.check()
+        self.assertTrue(any('take_profit N/A' in error for error in result))
+        self.assertTrue(any('Investment-period N/A' in error for error in result))
+
+    def test_nonfinite_or_nonpositive_targets_rejected(self):
+        for value in (float('nan'),float('inf'),True,0,-1):
+            with self.subTest(value=value):
+                self.recommendation['stop_loss']={'value':value,'currency':'USD','na_reason':None}
+                self.save_recommendation()
+                self.assertTrue(any('stop_loss must be a positive finite' in error for error in self.check()))
+
+    def test_target_value_requires_currency_and_not_na(self):
+        self.recommendation['take_profit']={'value':125,'currency':None,'na_reason':'Unknown'}
+        self.save_recommendation()
+        result=self.check()
+        self.assertTrue(any('take_profit needs its price currency' in error for error in result))
+        self.assertTrue(any('both a price and N/A' in error for error in result))
+
+    def test_numeric_barriers_require_frozen_comparable_basis(self):
+        for basis in (None,{}, {'currency':'USD','price_basis':'total_return_index','share_basis':'entry-share'}, {'currency':'JPY','price_basis':'split_adjusted_ex_dividend','share_basis':'entry-share'}):
+            with self.subTest(basis=basis):
+                self.recommendation['barrier_basis']=basis
+                self.save_recommendation()
+                self.assertTrue(any('basis' in error for error in self.check()))
+
+    def test_no_selection_still_requires_explicit_terms(self):
+        self.manifest['decision']='no_selection'
+        self.write('manifest.json',self.manifest)
+        self.recommendation['recommendation']='no_selection'
+        for field in ('target_entry','take_profit','stop_loss'):
+            self.recommendation[field]={'value':None,'currency':None,'na_reason':'No company selected.'}
+        self.recommendation['target_horizon']={'end_date':None,'reason':'No company selected.'}
+        self.save_recommendation()
+        self.assertEqual(self.check(),[])
+        self.recommendation.pop('stop_loss')
+        self.save_recommendation()
+        self.assertTrue(any('stop_loss' in error for error in self.check()))
+
+    def test_cover_hash_must_match_original_bytes(self):
+        self.recommendation['cover_letter']['sha256']='0'*64
+        self.save_recommendation()
+        self.assertTrue(any('Hash mismatch: cover.md' in error for error in self.check()))
+
+    def test_rehashed_cover_outside_published_report_blocks(self):
+        (self.root/'cover.md').write_text('Different first paragraph.\n\nDifferent second.\n\nDifferent third.\n\nDifferent fourth.\n')
+        self.recommendation['cover_letter']['sha256']=gate.digest(self.root/'cover.md')
+        self.reflection['reviewed_artifacts'][2]['sha256']=gate.digest(self.root/'cover.md')
+        self.save_recommendation()
+        self.assertTrue(any('occur verbatim in report.md' in error for error in self.check()))
+
+    def test_cover_is_a_required_reviewed_artifact(self):
+        self.reflection['reviewed_artifacts']=[a for a in self.reflection['reviewed_artifacts'] if a['path']!='cover.md']
+        self.assertTrue(any('cover.md must be a hashed reviewed artifact' in error for error in self.check()))
+
+    def test_cover_summary_is_one_short_paragraph(self):
+        for summary in ('', 'word '*51, 'First paragraph.\nSecond paragraph.'):
+            with self.subTest(summary=summary):
+                self.recommendation['cover_letter']['summary']=summary
+                self.save_recommendation()
+                self.assertTrue(any('Cover summary must be' in error for error in self.check()))
 
     def test_release_and_observe_closeout_pass(self):
         self.assertEqual(self.check(),[])
@@ -247,6 +330,15 @@ class LifecycleTests(unittest.TestCase):
         self.reflection['assessment_sha256']=gate.digest(self.root/'assessment/track-record.json')
         self.assertEqual(self.check(),[])
 
+
+    def test_known_report_with_unavailable_horizon_is_retained(self):
+        self.ledger['publications'].append({'publication_key':'report:known','report_id':'known','status':'delivered','provenance':'delivery_receipt'})
+        self.write('assessment/ledger-snapshot.json',self.ledger)
+        self.assessment['ledger_sha256']=gate.digest(self.root/'assessment/ledger-snapshot.json')
+        self.assessment['rows'].append({'publication_key':'report:known','report_id':'known','status':'horizon_unavailable'})
+        self.write('assessment/track-record.json',self.assessment)
+        self.reflection['assessment_sha256']=gate.digest(self.root/'assessment/track-record.json')
+        self.assertEqual(self.check(),[])
 
     def test_malformed_thesis_criteria_block_frozen_baseline(self):
         valid=copy.deepcopy(self.recommendation['thesis_criteria'][0])
