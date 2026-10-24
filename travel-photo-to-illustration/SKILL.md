@@ -60,12 +60,11 @@ python scripts/optimize-images.py \
 - Preserve actual prompts, tools, sources, generated additions, file hashes, and validation evidence in audit records. Briefly report original-to-asset mappings, storage locations, key edits, verification, and limitations.
 - Follow the user's authorization and repository instructions for saving, committing, pushing, PR creation, merging, and deployment. This skill grants no additional publishing authority. Do not unnecessarily reconfirm actions already authorized.
 
-## Publishing binary WebP files through GitHub
+## Publish through a separate skill
 
-- The GitHub app's `create_blob` action accepts Base64-encoded bytes (`encoding: base64`), not a local file path. Encode the **approved edited WebP**, never the original photo; then use `create_tree`, `create_commit`, and `update_ref` on a dedicated branch, followed by a pull request. Verify the published blob SHA and image decoding before linking it from the guide.
-- First verify that the runtime actually supports transferring the full encoded bytes from the local file reader to the authenticated GitHub action. A file on disk and an action accepting a string are **not** by themselves a data bridge. Do not paste truncated Base64, upload a path string as file content, or create manifest links to nonexistent blobs.
-- If that transfer path is unavailable, use an authenticated Git worktree with network access and push permissions for the binary, then use the GitHub app to open the PR. If neither transport exists, retain the approved local result and report the blocker; do not claim to have published it.
-- Compare local SHA-256, image dimensions and published bytes, retain source-to-revision lineage, and make PRs without merging until instructed.
+- This skill owns image cleanup, illustration, optimization, hash calculation, provenance, and visual revision caching. It produces validated assets and a publication handoff; it does not implement GitHub transport, authentication, branch updates, or PR creation.
+- For repository publication, the coordinating agent invokes [publish-github-assets](../publish-github-assets/SKILL.md) with the approved derivative file, SHA-256, target repository path, base ref, and authorization scope. Do not send original photos or their encoded copies.
+- The publishing skill verifies transport availability and checks the remote result. If transport fails, keep the local approved artifact and its lineage; do not register a nonexistent published variant or claim a PR was created.
 
 ## Scoped revisions and deferred merge
 
