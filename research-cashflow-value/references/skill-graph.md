@@ -38,6 +38,8 @@ Use this shape, with actual hashes and evidence paths rather than the placeholde
 {
   "decision": "undecided",
   "outcome": "running",
+  "outcome_evidence_reference": null,
+  "outcome_reason": null,
   "input_hashes": {},
   "nodes": {},
   "gates": {}
@@ -45,13 +47,36 @@ Use this shape, with actual hashes and evidence paths rather than the placeholde
 ```
 
 `decision` is `undecided`, `selected`, `no_selection` or `blocked`. `outcome` is
-`running`, `blocked`, `failed`, `delivered` or `no_selection_delivered`. Keep it
+`running`, `blocked`, `interrupted`, `delivery_failed`, `delivered` or
+`no_selection_delivered`. Keep it
 `running` while required research or delivery is in progress. A terminal outcome
 is an observed decision, not an instruction to report success. After it is fixed,
 no research, assessment, assembly or delivery node can start from old accepted
 predecessors; only terminal lifecycle nodes remain eligible. Finish an independent
 assessment before fixing the outcome, or record its cancellation and restore it
 under an explicitly resumed/new invocation rather than silently restarting work.
+
+For every terminal outcome, require `outcome_evidence_reference` pointing to the
+observed outcome record/receipt and `outcome_reason` preserving its actual cause.
+Copy graph `outcome` unchanged to closeout `run_outcome`, and copy its evidence
+reference to `run_outcome_evidence_reference`; retain the cause in closeout findings
+and the referenced record. The JSON `outcome_contract` declares this exact mapping.
+
+| Graph outcome | Closeout run_outcome | Observed condition |
+|---|---|---|
+| running | No terminal closeout value yet | Work or required reconciliation remains in progress |
+| blocked | blocked | Evidence, capability or a failed quality gate prevents an eligible report |
+| interrupted | interrupted | Invocation execution stopped before a report/delivery decision could finish |
+| delivery_failed | delivery_failed | An actual supported delivery attempt failed after preparation/release |
+| delivered | delivered | Selected-company report delivery has an observed receipt |
+| no_selection_delivered | no_selection_delivered | No-selection report delivery has an observed receipt |
+
+A node status `failed` remains valid, but a generic graph outcome `failed` is
+rejected because it loses this distinction. Migrate an older sidecar only from
+its actual evidence: a failed peer-data collection normally yields blocked; an
+interrupted runtime yields interrupted; a failed delivery attempt yields
+delivery_failed. If the cause cannot be established, keep it unresolved and
+record the uncertainty instead of inventing a terminal outcome or receipt.
 
 Each node record has `status`, `input_hash`, and `evidence` (nonempty observed
 artifact/receipt paths). Allowed statuses are `pending`, `running`, `accepted`,
@@ -62,9 +87,19 @@ canonical serialized material inputs, versions, upstream hashes, graph hash and
 pinned skill version. Preserve old attempts instead of editing their evidence.
 
 Only `model` may be `not_applicable`, only for a comparison-backed `no_selection`,
-with a reason and evidence. If modeling was performed and rejected the candidates,
-retain its accepted results. Failure/cancellation records require a reason and
-evidence. Never convert a blocked predecessor to accepted to unlock a descendant.
+with a reason and evidence. The model node is dispatchable on both report paths:
+use `phase_by_decision.selected` for normal modeling and
+`phase_by_decision.no_selection` to ask model-value to inspect the accepted
+selection and emit an explicit not-applicable result. This latter invocation
+must not compute fictitious valuations. The coordinator inspects its artifact,
+reason and current fingerprint before recording not_applicable in graph state
+and the compatible manifest record; merely seeing no_selection never skips it.
+If modeling was already performed and rejected the candidates, retain its accepted
+results without rerunning the skip phase. Failure/cancellation records likewise
+require a reason, evidence and current input_hash. A stale failure from another
+attempt cannot unlock dashboard or closeout; reconcile it and append a current
+failure/cancellation record without rewriting history. Never convert a blocked
+predecessor to accepted to unlock a descendant.
 
 A gate receipt keyed by the graph's gate ID has `passed: true`, the exact declared
 `command`, `input_hash` matching the target node's current input fingerprint, and

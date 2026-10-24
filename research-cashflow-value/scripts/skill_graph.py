@@ -9,6 +9,7 @@ MANIFEST_TASKS = ('plan', 'industry', 'peers', 'selection', 'model', 'outline', 
 STATUSES = {'pending', 'running', 'accepted', 'not_applicable', 'blocked', 'failed', 'cancelled'}
 REQUIREMENTS = {'accepted', 'terminal', 'accepted-or-no-selection'}
 CONDITIONS = {'always', 'selected', 'report-path', 'terminal-outcome'}
+TERMINAL_OUTCOMES = {'delivered', 'no_selection_delivered', 'blocked', 'interrupted', 'delivery_failed'}
 SHA256 = re.compile(r'^[0-9a-f]{64}$')
 
 
@@ -46,6 +47,9 @@ def validate_graph(graph, package_root=None):
             errors.append(f'{name}: missing phase')
         if node.get('when') not in CONDITIONS:
             errors.append(f'{name}: unknown condition')
+        branches = node.get('phase_by_decision')
+        if branches is not None and (not isinstance(branches, dict) or set(branches) != {'selected', 'no_selection'} or any(not isinstance(v, str) or not v.strip() for v in branches.values()) or node.get('when') != 'report-path'):
+            errors.append(f'{name}: invalid decision-specific phase contract')
         for field in ('inputs', 'outputs', 'gates', 'deps'):
             if not isinstance(node.get(field), list):
                 errors.append(f'{name}: {field} must be a list')
@@ -79,6 +83,9 @@ def validate_graph(graph, package_root=None):
         visited.add(name)
     for name in nodes:
         visit(name)
+    expected_mapping = {'running': None, **{value: value for value in TERMINAL_OUTCOMES}}
+    if graph.get('outcome_contract', {}).get('mapping') != expected_mapping:
+        errors.append('Graph outcomes must map exactly to lifecycle closeout outcomes')
     dispatch = graph.get('dispatch', {})
     if dispatch.get('max_parallel') != 'available-agent-slots' or dispatch.get('fanout_limit') != 'remaining-agent-slots' or dispatch.get('workers_launch_siblings') is not False:
         errors.append('Dispatch must be bounded and coordinator-owned')
@@ -111,7 +118,7 @@ def _not_applicable(state, node_id):
 def _terminal(state, node_id):
     record = state.get('nodes', {}).get(node_id, {})
     return bool(_accepted(state, node_id) or _not_applicable(state, node_id) or
-                (record.get('status') in {'blocked', 'failed', 'cancelled'} and bool(record.get('reason')) and _evidence(record)))
+                (record.get('status') in {'blocked', 'failed', 'cancelled'} and bool(record.get('reason')) and _evidence(record) and _fresh(state, node_id, record)))
 
 
 def _condition(state, condition):
@@ -138,8 +145,10 @@ def ready_nodes(graph, state, available_slots):
         raise ValueError('available_slots must be a nonnegative integer')
     if state.get('decision') not in {'undecided', 'selected', 'no_selection', 'blocked'}:
         raise ValueError('Unknown decision')
-    if state.get('outcome') not in {'running', 'blocked', 'failed', 'delivered', 'no_selection_delivered'}:
-        raise ValueError('Unknown outcome')
+    if state.get('outcome') not in {'running'} | TERMINAL_OUTCOMES:
+        raise ValueError('Outcome must be running or an exact lifecycle outcome; classify generic failed as blocked, interrupted or delivery_failed from observed cause')
+    if state['outcome'] != 'running' and any(not isinstance(state.get(field), str) or not state[field].strip() for field in ('outcome_evidence_reference', 'outcome_reason')):
+        raise ValueError('Terminal outcome requires its observed evidence reference and actual cause')
     records = state.get('nodes', {})
     if not isinstance(records, dict) or not isinstance(state.get('input_hashes', {}), dict) or not isinstance(state.get('gates', {}), dict):
         raise ValueError('Invalid state objects')

@@ -194,8 +194,8 @@
     },
     "model": {
       "skill": "model-value",
-      "phase": "model-and-verify",
-      "when": "selected",
+      "phase": "resolve-model-branch",
+      "when": "report-path",
       "deps": [
         {
           "node": "selection",
@@ -214,7 +214,11 @@
         "handoffs/model.json"
       ],
       "gates": [],
-      "manifest_task": "model"
+      "manifest_task": "model",
+      "phase_by_decision": {
+        "selected": "model-and-verify",
+        "no_selection": "verify-no-selection-and-record-not-applicable"
+      }
     },
     "outline": {
       "skill": "outline-report",
@@ -562,5 +566,20 @@
     "immutable_history": true,
     "current_run_commit": "fixed",
     "new_skill_commit": "next-invocation-only"
+  },
+  "outcome_contract": {
+    "field": "outcome",
+    "closeout_field": "run_outcome",
+    "mapping": {
+      "running": null,
+      "delivered": "delivered",
+      "no_selection_delivered": "no_selection_delivered",
+      "blocked": "blocked",
+      "interrupted": "interrupted",
+      "delivery_failed": "delivery_failed"
+    },
+    "evidence_field": "outcome_evidence_reference",
+    "closeout_evidence_field": "run_outcome_evidence_reference",
+    "cause_field": "outcome_reason"
   }
 }

@@ -6,13 +6,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
-from skill_graph import MANIFEST_TASKS, ready_nodes, validate_graph
+from skill_graph import MANIFEST_TASKS, TERMINAL_OUTCOMES, ready_nodes, validate_graph
 
 
 class SkillGraphTests(unittest.TestCase):
     def setUp(self):
         self.graph = json.loads((ROOT / 'assets/skill-graph.json').read_text())
-        self.state = {'decision': 'undecided', 'outcome': 'running', 'nodes': {}, 'input_hashes': {}, 'gates': {}}
+        self.state = {'decision': 'undecided', 'outcome': 'running', 'nodes': {}, 'input_hashes': {}, 'gates': {}, 'outcome_evidence_reference': 'outcome/observed.json', 'outcome_reason': 'Fixture observed outcome'}
 
     def record(self, name, status='accepted', reason=None):
         self.state['input_hashes'][name] = 'a' * 64
@@ -64,7 +64,8 @@ class SkillGraphTests(unittest.TestCase):
     def test_no_selection_requires_explicit_evidenced_model_skip(self):
         self.state['decision'] = 'no_selection'
         self.record('selection')
-        self.assertNotIn('model', self.ready())
+        self.assertIn('model', self.ready())
+        self.assertEqual(self.graph['nodes']['model']['phase_by_decision']['no_selection'], 'verify-no-selection-and-record-not-applicable')
         self.assertNotIn('outline', self.ready())
         self.record('model', 'not_applicable', 'No eligible candidates after comparison')
         self.assertIn('outline', self.ready())
@@ -129,7 +130,7 @@ class SkillGraphTests(unittest.TestCase):
         self.assertNotIn('reflection-closeout', self.ready())
 
     def test_final_cache_survives_failed_reflection_and_deferred_evolution(self):
-        self.state.update(decision='blocked', outcome='failed')
+        self.state.update(decision='blocked', outcome='blocked')
         self.record('reflection-closeout', 'failed', 'Evidence missing')
         self.record('evolution', 'cancelled', 'No accepted reflection')
         self.record('dashboard', 'blocked', 'Assessment unavailable')
@@ -182,7 +183,7 @@ class SkillGraphTests(unittest.TestCase):
         self.gate('workflow-review', 'publish')
         self.gate('workflow-publish', 'delivery')
         self.gate('lifecycle-release', 'delivery')
-        for outcome in ('failed', 'blocked', 'delivered', 'no_selection_delivered'):
+        for outcome in TERMINAL_OUTCOMES:
             self.state['outcome'] = outcome
             for candidate in ('industry', 'peers', 'model', 'publish', 'delivery', 'assessment'):
                 before = copy.deepcopy(self.state['nodes'])
@@ -191,13 +192,55 @@ class SkillGraphTests(unittest.TestCase):
                 self.state['nodes'] = before
 
     def test_stale_assessment_cannot_update_historical_dashboard(self):
-        self.state.update(decision='blocked', outcome='failed')
+        self.state.update(decision='blocked', outcome='blocked')
         self.record('assessment')
         self.record('delivery', 'cancelled', 'No new report')
         self.state['input_hashes']['assessment'] = 'b' * 64
         self.assertNotIn('dashboard', self.ready())
         self.state['nodes']['dashboard'] = {'status': 'blocked', 'reason': 'Assessment stale', 'evidence': ['checks/assessment-stale.json']}
         self.assertNotIn('delivery', self.ready())
+
+    def test_stale_failed_blocked_and_cancelled_records_do_not_unlock_closeout(self):
+        self.state.update(decision='blocked', outcome='blocked')
+        for dep in self.graph['nodes']['reflection-closeout']['deps']:
+            self.record(dep['node'], 'cancelled', 'Upstream collection failed')
+        for status in ('failed', 'blocked', 'cancelled'):
+            self.record('peers', status, 'Current attempt could not establish peer evidence')
+            self.assertIn('reflection-closeout', self.ready())
+            self.state['input_hashes']['peers'] = 'b' * 64
+            self.assertNotIn('reflection-closeout', self.ready(), status)
+            self.state['nodes']['peers'].pop('input_hash')
+            self.assertNotIn('reflection-closeout', self.ready(), status)
+
+    def test_stale_cancelled_delivery_cannot_unlock_dashboard(self):
+        self.state.update(decision='blocked', outcome='blocked')
+        self.record('assessment')
+        self.record('delivery', 'cancelled', 'Research did not produce a report')
+        self.assertIn('dashboard', self.ready())
+        self.state['input_hashes']['delivery'] = 'b' * 64
+        self.assertNotIn('dashboard', self.ready())
+
+    def test_generic_failure_cannot_erase_closeout_cause(self):
+        self.state['outcome'] = 'failed'
+        with self.assertRaisesRegex(ValueError, 'observed cause'):
+            self.ready()
+        for outcome in TERMINAL_OUTCOMES:
+            self.state['outcome'] = outcome
+            before = copy.deepcopy(self.state)
+            self.ready()
+            self.assertEqual(self.graph['outcome_contract']['mapping'][outcome], outcome)
+            self.assertEqual(self.state, before)
+        self.state.pop('outcome_evidence_reference')
+        with self.assertRaisesRegex(ValueError, 'actual cause'):
+            self.ready()
+
+    def test_invalid_outcome_mapping_and_model_branch_contract_are_rejected(self):
+        broken = copy.deepcopy(self.graph)
+        broken['outcome_contract']['mapping']['delivery_failed'] = 'blocked'
+        self.assertTrue(any('exactly' in e for e in validate_graph(broken)))
+        broken = copy.deepcopy(self.graph)
+        broken['nodes']['model']['phase_by_decision'].pop('no_selection')
+        self.assertTrue(any('decision-specific' in e for e in validate_graph(broken)))
 
     def test_readiness_is_pure_and_never_marks_delivery(self):
         before = copy.deepcopy(self.state)
