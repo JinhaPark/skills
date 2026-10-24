@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-24T08:51:18+00:00",
+  "rows": [
+    {
+      "publication_key": "legacy:HP-Inc:2026-10-24",
+      "date": "2026-10-24",
+      "company": "HP Inc.",
+      "ticker": "HPQ",
+      "thesis": null,
+      "thesis_na_reason": "Original cover letter unavailable",
+      "thesis_source": null,
+      "cover_sha256": null,
+      "origin": "User-confirmed prior publication; original report not recovered",
+      "report_url": null,
+      "target_entry": {
+        "value": null,
+        "currency": null,
+        "na_reason": "Original report unavailable"
+      },
+      "take_profit": {
+        "value": null,
+        "currency": null,
+        "na_reason": "Original report unavailable"
+      },
+      "stop_loss": {
+        "value": null,
+        "currency": null,
+        "na_reason": "Original report unavailable"
+      },
+      "horizon": {
+        "end_date": null,
+        "duration": null,
+        "na_reason": "Original Horizon unavailable"
+      },
+      "status": "Awaiting original report",
+      "assessments": [
+        {
+          "assessed_at": "2026-10-24T08:51:18+00:00",
+          "event": "not_assessable",
+          "event_at": null,
+          "summary": "Publication is user-confirmed. Original cover letter, entry terms and exit conditions are unavailable, so performance and thesis validity remain unassessed.",
+          "source_urls": []
+        }
+      ]
+    }
+  ]
+}

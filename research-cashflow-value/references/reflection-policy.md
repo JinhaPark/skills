@@ -101,7 +101,7 @@ Check these IDs explicitly in every candidate patch:
 - `history`: Immutable publication commitments, whole-cohort evaluation, actual-delivery ledger, HPQ protagonist exclusion, steel/theme exclusions, and valid no-selection branch.
 - `delivery`: One complete Korean Markdown report, opening NTM FCF/CDS table then four-paragraph cover and deep body; unchanged schedule/channel, no news-feed/Discord posting.
 - `orchestration`: Staged full-section writing, dependencies/handoffs, canonical ownership, invalidation, separate reflection/independent patch peer, durable cache, honest failure states.
-- `scope`: Only this skill package changes; no unrelated repo/account, dependency calculation code, original report, user constraint, or permission changes.
+- `scope`: Skill evolution changes only this skill package. The separate dashboard publisher may update the explicitly authorized README/data summary paths; no unrelated repo/account, dependency calculation code, original report, user constraint, or permission changes.
 
 Retain proposals requiring changed constraints as separately explained recommendations, not silently applied patches. Routine in-scope improvements are already authorized and need no repeated confirmation.
 
@@ -112,3 +112,12 @@ Do not impose an improvement quota. `observe` succeeds when no change is justifi
 Promotion requires passing checks, actual fresh-context execution, independent peer acceptance without unresolved material concerns, unchanged invariants, and successful guarded remote commit/ref update. Keep regression fixtures and forward-test tasks distinct. Never remove failures, narrow cohorts, or weaken checks to improve apparent results. An evidenced workflow repair does not guarantee future returns.
 
 Apply changes only to later invocations. Record the accepted version in the durable index, verify the next run pins it, and compare later reliability to baseline with sample size/uncertainty. Revert material regressions using new commits and expected-head guards; preserve history and extend regression coverage. Never force-push or improve old predictions by overwriting them.
+
+Inspect README ordering, immutable proposed entry/TP/SL/Horizon, explicit N/A,
+barrier observation coverage, trigger-order uncertainty and event/thesis assessments
+under dashboard-policy.md. Record dashboard update success/failure independently
+of report delivery and feed recurrent defects into the improvement backlog.
+
+Check README uses at most one paragraph per publication week, a rolling 12-week
+view, consistent paragraph budgets and a faithful summary of the original cover.
+Retain original rows and full evaluation history in the public archive.

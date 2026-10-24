@@ -42,6 +42,8 @@ Do not publish, change schedules or repositories, or launch sibling phases.
     plus a different peer reviewer for any proposed workflow changes.
     Start assess-track-record after history restore, parallel with industry work.
     Plan cache checkpoints after every accepted stage and every exit outcome.
+    Assign a dashboard publisher for the two authorized public paths; prepare
+    historical updates even if the current research report cannot be delivered.
     Preserve the nine research task IDs; use separate lifecycle artifacts for
     assessment, reflection, cache receipts and evolution decisions.
     Load prior validated improvements at bootstrap; freeze this invocation's

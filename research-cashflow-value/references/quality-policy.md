@@ -23,3 +23,8 @@ After all outcomes preserve cache receipts, reflection findings and the explicit
 evolution decision. Promote only peer-reviewed, regression-tested and fresh-context
 validated improvements for the next invocation. Preserve original reports, user
 constraints and existing destinations; verify rollback and honest capability limits.
+
+Require frozen proposed entry, TP, SL and Horizon, each either grounded
+or explicitly N/A with a reason. Check the public README projection, newest-date
+ordering, event evidence and original-thesis assessment; never replace missing
+legacy commitments with current estimates.

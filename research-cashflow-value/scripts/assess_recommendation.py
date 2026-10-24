@@ -168,11 +168,18 @@ def assess(record, observations, as_of):
         raise ValueError("unsupported recommendation")
     if decision == "no_selection":
         return {**result, "status": "not_a_stock_recommendation", "reason": "evaluate process and reopening conditions separately"}
-    horizon = day(record["target_horizon"]["end_date"])
-    exchange_zone = ZoneInfo(record["target_horizon"]["exchange_timezone"])
+    result["thesis_checks"] = thesis_checks(record.get("thesis_criteria", []), observations.get("thesis", {}), cutoff)
+    horizon_record = record.get("target_horizon")
+    if horizon_record is not None and not isinstance(horizon_record, dict):
+        raise ValueError("target_horizon must be an object or null")
+    if not horizon_record or horizon_record.get("end_date") is None:
+        return {**result, "status": "horizon_unavailable", "horizon_status": "not_specified",
+                "target_horizon_end": None, "returns": None,
+                "reason": (horizon_record or {}).get("reason") or "original horizon endpoint was not recorded; do not invent a default horizon"}
+    horizon = day(horizon_record["end_date"])
+    exchange_zone = ZoneInfo(horizon_record["exchange_timezone"])
     if horizon < published.astimezone(exchange_zone).date():
         raise ValueError("target horizon precedes publication")
-    result["thesis_checks"] = thesis_checks(record.get("thesis_criteria", []), observations.get("thesis", {}), cutoff)
     entry = record.get("entry")
     if entry is None:
         return {**result, "status": "baseline_unavailable", "returns": None, "reason": "original entry or first executable entry observation unavailable"}

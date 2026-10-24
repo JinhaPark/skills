@@ -107,7 +107,7 @@ def check_reflection(root, record, manifest, checkpoint):
         except (OSError, ValueError, TypeError) as exc:
             fail(str(exc))
     if checkpoint == 'prepublish':
-        for required in ('report.md', 'recommendation.json'):
+        for required in ('report.md', 'recommendation.json', 'cover.md'):
             if required not in names:
                 fail(f'{required} must be a hashed reviewed artifact')
     dimensions = record.get('dimensions', {})
@@ -228,7 +228,7 @@ def check_assessment(root, assessment, manifest):
         fail('Assessment rows must be an array')
         rows = []
     actual = {}
-    statuses = {'matured','interim','pending_horizon','awaiting_horizon_data','legacy_unavailable','baseline_unavailable','not_a_stock_recommendation'}
+    statuses = {'matured','interim','pending_horizon','awaiting_horizon_data','legacy_unavailable','baseline_unavailable','horizon_unavailable','not_a_stock_recommendation'}
     for row in rows:
         if not isinstance(row, dict) or not nonempty(row.get('publication_key')):
             fail('Assessment row needs original publication key')
@@ -396,6 +396,41 @@ def check_price_record(record, base_currency, label):
     return errors
 
 
+def check_dashboard_price(value, label):
+    """Check frozen target terms; a missing target is explicit NA, never zero."""
+    errors = []
+    if not isinstance(value, dict) or not {'value', 'currency', 'na_reason'}.issubset(value):
+        return [f'recommendation: {label} needs value, currency and na_reason fields']
+    amount, currency, reason = value['value'], value['currency'], value['na_reason']
+    if amount is None:
+        if not nonempty(reason):
+            errors.append(f'recommendation: {label} N/A needs an explicit reason')
+        if currency is not None and not nonempty(currency):
+            errors.append(f'recommendation: {label} has an invalid currency')
+    else:
+        if type(amount) not in (int, float) or not math.isfinite(amount) or amount <= 0:
+            errors.append(f'recommendation: {label} must be a positive finite target price or N/A')
+        if not nonempty(currency):
+            errors.append(f'recommendation: {label} needs its price currency')
+        if reason is not None:
+            errors.append(f'recommendation: {label} cannot be both a price and N/A')
+    return errors
+
+
+def check_dashboard_horizon(horizon):
+    if not isinstance(horizon, dict) or 'end_date' not in horizon:
+        return ['recommendation: Investment period needs end_date or explicit N/A']
+    if horizon['end_date'] is None:
+        return [] if nonempty(horizon.get('reason')) else ['recommendation: Investment-period N/A needs an explicit reason']
+    try:
+        date.fromisoformat(horizon['end_date'])
+        if not nonempty(horizon.get('exchange_timezone')) or horizon.get('market_close_rule') != 'first_session_on_or_after':
+            raise ValueError('Missing horizon calendar convention')
+    except (ValueError, TypeError):
+        return ['recommendation: Stock judgment needs a valid frozen target horizon/calendar or explicit N/A']
+    return []
+
+
 def validate_lifecycle(run_dir, phase='release'):
     root = Path(run_dir).resolve()
     manifest = read_record(root, 'manifest.json')
@@ -414,6 +449,23 @@ def validate_lifecycle(run_dir, phase='release'):
             errors.append('recommendation: Missing schema/report ID')
         if recommendation.get('frozen_report_sha256') != digest(local_file(root, 'report.md')):
             errors.append('recommendation: Frozen report hash differs from report.md')
+        cover = recommendation.get('cover_letter')
+        if not isinstance(cover,dict) or cover.get('path') != 'cover.md':
+            errors.append('recommendation: cover_letter must identify the original cover.md')
+        else:
+            try:
+                cover_path = check_artifact(root,cover['path'],cover.get('sha256'))
+                cover_text = cover_path.read_text().strip()
+                report_text = local_file(root,'report.md').read_text()
+                if not cover_text or cover_text not in report_text:
+                    errors.append('recommendation: Original cover text must occur verbatim in report.md')
+                if len(re.split(r'\n\s*\n',cover_text)) != 4:
+                    errors.append('recommendation: Original cover must contain four paragraphs')
+            except (OSError,ValueError,TypeError) as exc:
+                errors.append(f'recommendation: {exc}')
+            summary = cover.get('summary')
+            if not nonempty(summary) or len(summary.split()) > 50 or '\n' in summary or '\r' in summary:
+                errors.append('recommendation: Cover summary must be one nonempty paragraph of at most 50 whitespace-delimited words')
         if recommendation.get('skill_commit') != manifest.get('repository_commit'):
             errors.append('recommendation: Skill commit differs from pinned manifest')
         if recommendation.get('publication_status') != 'ready' or recommendation.get('publication_at') is not None or recommendation.get('report_reference') is not None:
@@ -423,16 +475,19 @@ def validate_lifecycle(run_dir, phase='release'):
             errors.append('recommendation: Invalid original decision')
         if (manifest.get('decision') == 'no_selection') != (decision == 'no_selection'):
             errors.append('recommendation: Decision contradicts research manifest')
+        for field in ('target_entry', 'take_profit', 'stop_loss'):
+            errors.extend(check_dashboard_price(recommendation.get(field), field))
+        errors.extend(check_dashboard_horizon(recommendation.get('target_horizon')))
+        numeric_barriers = [recommendation.get(field) for field in ('take_profit','stop_loss') if isinstance(recommendation.get(field),dict) and recommendation[field].get('value') is not None]
+        if numeric_barriers:
+            basis = recommendation.get('barrier_basis')
+            if not isinstance(basis,dict) or not nonempty(basis.get('currency')) or not nonempty(basis.get('share_basis')) or basis.get('price_basis') != 'split_adjusted_ex_dividend':
+                errors.append('recommendation: Numeric TP/SL needs a frozen currency, ex-dividend price and share basis')
+            elif any(price.get('currency') != basis['currency'] for price in numeric_barriers):
+                errors.append('recommendation: TP/SL currency differs from the frozen barrier basis')
+        if decision == 'no_selection' and any(isinstance(recommendation.get(field),dict) and recommendation[field].get('value') is not None for field in ('target_entry','take_profit','stop_loss')):
+            errors.append('recommendation: No-selection entry, TP and SL must remain N/A')
         if decision in ('buy', 'watch', 'avoid'):
-            horizon = recommendation.get('target_horizon', {})
-            try:
-                if not isinstance(horizon, dict):
-                    raise ValueError('Missing horizon')
-                date.fromisoformat(horizon.get('end_date', ''))
-                if not nonempty(horizon.get('exchange_timezone')) or horizon.get('market_close_rule') != 'first_session_on_or_after':
-                    raise ValueError('Missing horizon calendar convention')
-            except (ValueError, TypeError):
-                errors.append('recommendation: Stock judgment needs a frozen target horizon/calendar')
             if not nonempty(recommendation.get('entity_id')) or not nonempty(recommendation.get('base_currency')) or recommendation.get('original_snapshot_available') is not True:
                 errors.append('recommendation: Stock judgment needs entity, base currency and original snapshot')
             unavailable = recommendation.get('unavailable_fields', [])

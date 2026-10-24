@@ -19,7 +19,9 @@
     "end_date": null,
     "exchange_timezone": null,
     "market_close_rule": "first_session_on_or_after",
-    "reason": null
+    "reason": null,
+    "duration": null,
+    "start_basis": null
   },
   "return_convention": {
     "dividends": "cash_received_not_reinvested",
@@ -33,5 +35,30 @@
   "thesis_narrative": null,
   "thesis_criteria": [],
   "catalysts": [],
-  "unavailable_fields": []
+  "unavailable_fields": [],
+  "target_entry": {
+    "value": null,
+    "currency": null,
+    "na_reason": "Not specified in the original recommendation."
+  },
+  "take_profit": {
+    "value": null,
+    "currency": null,
+    "na_reason": "Not specified in the original recommendation."
+  },
+  "stop_loss": {
+    "value": null,
+    "currency": null,
+    "na_reason": "Not specified in the original recommendation."
+  },
+  "barrier_basis": {
+    "currency": null,
+    "price_basis": "split_adjusted_ex_dividend",
+    "share_basis": null
+  },
+  "cover_letter": {
+    "path": "cover.md",
+    "sha256": null,
+    "summary": null
+  }
 }

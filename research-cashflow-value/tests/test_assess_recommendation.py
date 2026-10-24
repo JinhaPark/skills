@@ -38,6 +38,32 @@ def fixture():
 
 
 class AssessmentTests(unittest.TestCase):
+    def test_missing_horizon_keeps_thesis_without_invented_return(self):
+        record, observations = fixture()
+        record['target_horizon']={'end_date':None,'reason':'No original investment period was specified.'}
+        before=copy.deepcopy(record)
+        result=MODULE.assess(record, observations, '2027-10-25T00:00:00Z')
+        self.assertEqual(result['status'],'horizon_unavailable')
+        self.assertIsNone(result['target_horizon_end'])
+        self.assertIsNone(result['returns'])
+        self.assertEqual(result['thesis_checks'][0]['status'],'falsification_triggered')
+        self.assertEqual(record,before)
+
+    def test_older_missing_horizon_is_na_not_rewritten(self):
+        record, observations = fixture()
+        record.pop('target_horizon')
+        result=MODULE.assess(record, observations, '2027-10-25T00:00:00Z')
+        self.assertEqual(result['status'],'horizon_unavailable')
+        self.assertNotIn('target_horizon',record)
+        self.assertIn('do not invent',result['reason'])
+
+    def test_malformed_horizon_is_not_silently_na(self):
+        record, observations = fixture()
+        for value in ('not-a-date', ''):
+            record['target_horizon']['end_date']=value
+            with self.assertRaises(ValueError):
+                MODULE.assess(record, observations, '2027-10-25T00:00:00Z')
+
     def test_mature_price_total_and_thesis_are_separate(self):
         record, observations = fixture()
         result = MODULE.assess(record, observations, "2027-10-25T00:00:00Z")

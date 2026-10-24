@@ -24,7 +24,11 @@ description: Evaluate every previously published cash flow recommendation agains
 7. Compare original scenario drivers and forecasts with actual matching periods. Evaluate falsification conditions and catalyst timing independently of stock-price direction.
 8. Record supported/weakened/falsified/mixed/not-yet-evaluable thesis conclusions with sources, counterevidence and unresolved questions.
 9. Aggregate only compatible, clearly labeled cohorts. Show sample size, maturity, missing-data coverage, absolute and excess outcomes; do not rank workflow changes by a noisy short-term win rate.
-10. Send evidence-backed method/data/execution findings to reflection, distinguishing them from outcome luck and unobservable counterfactuals.
+10. Apply [dashboard policy](../../references/dashboard-policy.md): check original
+    TP, SL and period independently with sourced activation and coverage; evaluate
+    reached conditions and preserve ambiguous/missing observations. Send the
+    public summary to update-dashboard, keeping original-horizon outcomes separate.
+11. Send evidence-backed method/data/execution findings to reflection, distinguishing them from outcome luck and unobservable counterfactuals.
 
 ## Outputs and gate
 
