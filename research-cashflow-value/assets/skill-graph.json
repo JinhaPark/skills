@@ -1,0 +1,585 @@
+{
+  "schema_version": 1,
+  "graph_id": "cashflow-research-v1",
+  "contract": "references/handoff-contract.md",
+  "registry": {
+    "cache-run": {
+      "path": "subskills/cache-run/SKILL.md"
+    },
+    "plan-research": {
+      "path": "subskills/plan-research/SKILL.md"
+    },
+    "assess-track-record": {
+      "path": "subskills/assess-track-record/SKILL.md"
+    },
+    "research-industry": {
+      "path": "subskills/research-industry/SKILL.md"
+    },
+    "research-peers": {
+      "path": "subskills/research-peers/SKILL.md"
+    },
+    "select-candidate": {
+      "path": "subskills/select-candidate/SKILL.md"
+    },
+    "model-value": {
+      "path": "subskills/model-value/SKILL.md"
+    },
+    "outline-report": {
+      "path": "subskills/outline-report/SKILL.md"
+    },
+    "write-section": {
+      "path": "subskills/write-section/SKILL.md"
+    },
+    "review-report": {
+      "path": "subskills/review-report/SKILL.md"
+    },
+    "publish-report": {
+      "path": "subskills/publish-report/SKILL.md"
+    },
+    "reflect-research": {
+      "path": "subskills/reflect-research/SKILL.md"
+    },
+    "update-dashboard": {
+      "path": "subskills/update-dashboard/SKILL.md"
+    },
+    "evolve-workflow": {
+      "path": "subskills/evolve-workflow/SKILL.md"
+    }
+  },
+  "nodes": {
+    "cache-bootstrap": {
+      "skill": "cache-run",
+      "phase": "bootstrap",
+      "when": "always",
+      "deps": [],
+      "inputs": [
+        "persistent index identities",
+        "pinned package commit"
+      ],
+      "outputs": [
+        "restored cache index",
+        "bootstrap checkpoint receipt"
+      ],
+      "gates": []
+    },
+    "plan": {
+      "skill": "plan-research",
+      "phase": "plan",
+      "when": "always",
+      "deps": [
+        {
+          "node": "cache-bootstrap",
+          "requires": "accepted"
+        }
+      ],
+      "inputs": [
+        "request",
+        "restored history",
+        "runtime capabilities"
+      ],
+      "outputs": [
+        "manifest.json",
+        "workflow-plan.md",
+        "history-check.md",
+        "handoffs/plan.json"
+      ],
+      "gates": [],
+      "manifest_task": "plan"
+    },
+    "assessment": {
+      "skill": "assess-track-record",
+      "phase": "whole-cohort",
+      "when": "always",
+      "deps": [
+        {
+          "node": "plan",
+          "requires": "accepted"
+        }
+      ],
+      "inputs": [
+        "full publication ledger",
+        "frozen recommendations",
+        "source observations"
+      ],
+      "outputs": [
+        "assessment/track-record.json",
+        "assessment/track-record.md",
+        "handoffs/assessment.json"
+      ],
+      "gates": []
+    },
+    "industry": {
+      "skill": "research-industry",
+      "phase": "research-and-integrate",
+      "when": "always",
+      "deps": [
+        {
+          "node": "plan",
+          "requires": "accepted"
+        }
+      ],
+      "inputs": [
+        "constraints",
+        "history",
+        "price cutoff"
+      ],
+      "outputs": [
+        "industry/thesis.md",
+        "industry/peer-pool.json",
+        "handoffs/industry.json"
+      ],
+      "gates": [],
+      "fanout": {
+        "source": "fixed",
+        "lanes": [
+          "demand",
+          "supply-dissent"
+        ],
+        "join": "all-required-accepted"
+      },
+      "manifest_task": "industry"
+    },
+    "peers": {
+      "skill": "research-peers",
+      "phase": "extract-and-integrate",
+      "when": "always",
+      "deps": [
+        {
+          "node": "industry",
+          "requires": "accepted"
+        }
+      ],
+      "inputs": [
+        "accepted peer pool",
+        "industry handoff",
+        "NTM definitions"
+      ],
+      "outputs": [
+        "data.json",
+        "data/comparison.json",
+        "peers/comparability.md",
+        "handoffs/peers.json"
+      ],
+      "gates": [],
+      "fanout": {
+        "source": "approved-peer-pool",
+        "fixed_lanes": [
+          "credit"
+        ],
+        "join": "all-required-accepted"
+      },
+      "manifest_task": "peers"
+    },
+    "selection": {
+      "skill": "select-candidate",
+      "phase": "shortlist",
+      "when": "always",
+      "deps": [
+        {
+          "node": "peers",
+          "requires": "accepted"
+        }
+      ],
+      "inputs": [
+        "canonical comparison",
+        "history",
+        "industry thesis"
+      ],
+      "outputs": [
+        "selection/decision.json",
+        "handoffs/selection.json"
+      ],
+      "gates": [],
+      "manifest_task": "selection"
+    },
+    "model": {
+      "skill": "model-value",
+      "phase": "resolve-model-branch",
+      "when": "report-path",
+      "deps": [
+        {
+          "node": "selection",
+          "requires": "accepted"
+        }
+      ],
+      "inputs": [
+        "selection decision",
+        "data.json",
+        "pinned distress-adjusted-dcf"
+      ],
+      "outputs": [
+        "model.json",
+        "model/inputs.json",
+        "model/value-comparison.md",
+        "handoffs/model.json"
+      ],
+      "gates": [],
+      "manifest_task": "model",
+      "phase_by_decision": {
+        "selected": "model-and-verify",
+        "no_selection": "verify-no-selection-and-record-not-applicable"
+      }
+    },
+    "outline": {
+      "skill": "outline-report",
+      "phase": "outline",
+      "when": "report-path",
+      "deps": [
+        {
+          "node": "selection",
+          "requires": "accepted"
+        },
+        {
+          "node": "model",
+          "requires": "accepted-or-no-selection"
+        }
+      ],
+      "inputs": [
+        "accepted research",
+        "model or evidenced no-selection result"
+      ],
+      "outputs": [
+        "outline/report-plan.json",
+        "outline/thesis-map.md",
+        "outline/terminology.md",
+        "handoffs/outline.json"
+      ],
+      "gates": [],
+      "manifest_task": "outline"
+    },
+    "writing": {
+      "skill": "write-section",
+      "phase": "write-and-integrate",
+      "when": "report-path",
+      "deps": [
+        {
+          "node": "outline",
+          "requires": "accepted"
+        }
+      ],
+      "inputs": [
+        "accepted outline",
+        "frozen versions",
+        "predecessor handoffs and full artifacts"
+      ],
+      "outputs": [
+        "sections/*.md",
+        "sections/*.claims.json",
+        "handoffs/writing.json"
+      ],
+      "gates": [],
+      "fanout": {
+        "source": "approved-section-dag",
+        "join": "all-required-accepted"
+      },
+      "manifest_task": "writing"
+    },
+    "review": {
+      "skill": "review-report",
+      "phase": "review-and-reconcile",
+      "when": "report-path",
+      "deps": [
+        {
+          "node": "writing",
+          "requires": "accepted"
+        }
+      ],
+      "inputs": [
+        "complete drafts",
+        "original evidence",
+        "calculations"
+      ],
+      "outputs": [
+        "reviews/facts-and-model.json",
+        "reviews/logic-and-editorial.json",
+        "handoffs/review.json"
+      ],
+      "gates": [],
+      "fanout": {
+        "source": "fixed",
+        "lanes": [
+          "facts-and-model",
+          "logic-and-editorial"
+        ],
+        "join": "all-required-accepted"
+      },
+      "manifest_task": "review"
+    },
+    "publish": {
+      "skill": "publish-report",
+      "phase": "assemble-only",
+      "when": "report-path",
+      "deps": [
+        {
+          "node": "review",
+          "requires": "accepted"
+        }
+      ],
+      "inputs": [
+        "accepted sections",
+        "current comparison",
+        "resolved review"
+      ],
+      "outputs": [
+        "report.md",
+        "cover.md",
+        "recommendation.json",
+        "publication.json",
+        "handoffs/publish.json"
+      ],
+      "gates": [
+        "workflow-review"
+      ],
+      "manifest_task": "publish"
+    },
+    "reflection-prepublish": {
+      "skill": "reflect-research",
+      "phase": "prepublish",
+      "when": "report-path",
+      "deps": [
+        {
+          "node": "publish",
+          "requires": "accepted"
+        },
+        {
+          "node": "assessment",
+          "requires": "accepted"
+        }
+      ],
+      "inputs": [
+        "frozen report/recommendation/cover",
+        "assessment",
+        "review and cache records"
+      ],
+      "outputs": [
+        "reviews/reflection-prepublish.json"
+      ],
+      "gates": []
+    },
+    "delivery": {
+      "skill": "publish-report",
+      "phase": "deliver-only",
+      "when": "report-path",
+      "deps": [
+        {
+          "node": "publish",
+          "requires": "accepted"
+        },
+        {
+          "node": "reflection-prepublish",
+          "requires": "accepted"
+        }
+      ],
+      "inputs": [
+        "hash-bound reflection",
+        "frozen report",
+        "supported channel"
+      ],
+      "outputs": [
+        "delivery-receipt.json",
+        "confirmed publication ledger event"
+      ],
+      "gates": [
+        "workflow-publish",
+        "lifecycle-release"
+      ]
+    },
+    "dashboard": {
+      "skill": "update-dashboard",
+      "phase": "published-history-only",
+      "when": "terminal-outcome",
+      "deps": [
+        {
+          "node": "assessment",
+          "requires": "accepted"
+        },
+        {
+          "node": "delivery",
+          "requires": "terminal"
+        }
+      ],
+      "inputs": [
+        "accepted whole-cohort assessment",
+        "confirmed publication snapshots",
+        "actual current delivery outcome"
+      ],
+      "outputs": [
+        "reviewed public projection",
+        "dashboard update or pending receipt"
+      ],
+      "gates": []
+    },
+    "reflection-closeout": {
+      "skill": "reflect-research",
+      "phase": "closeout",
+      "when": "terminal-outcome",
+      "deps": [
+        {
+          "node": "cache-bootstrap",
+          "requires": "terminal"
+        },
+        {
+          "node": "plan",
+          "requires": "terminal"
+        },
+        {
+          "node": "industry",
+          "requires": "terminal"
+        },
+        {
+          "node": "peers",
+          "requires": "terminal"
+        },
+        {
+          "node": "selection",
+          "requires": "terminal"
+        },
+        {
+          "node": "model",
+          "requires": "terminal"
+        },
+        {
+          "node": "outline",
+          "requires": "terminal"
+        },
+        {
+          "node": "writing",
+          "requires": "terminal"
+        },
+        {
+          "node": "review",
+          "requires": "terminal"
+        },
+        {
+          "node": "publish",
+          "requires": "terminal"
+        },
+        {
+          "node": "assessment",
+          "requires": "terminal"
+        },
+        {
+          "node": "reflection-prepublish",
+          "requires": "terminal"
+        },
+        {
+          "node": "delivery",
+          "requires": "terminal"
+        },
+        {
+          "node": "dashboard",
+          "requires": "terminal"
+        }
+      ],
+      "inputs": [
+        "actual outcomes",
+        "all accessible evidence",
+        "dashboard and delivery receipts"
+      ],
+      "outputs": [
+        "reflection/closeout.json",
+        "prioritized backlog"
+      ],
+      "gates": []
+    },
+    "evolution": {
+      "skill": "evolve-workflow",
+      "phase": "evaluate-next-run-change",
+      "when": "terminal-outcome",
+      "deps": [
+        {
+          "node": "reflection-closeout",
+          "requires": "accepted"
+        }
+      ],
+      "inputs": [
+        "accepted closeout",
+        "pinned baseline",
+        "independent evaluation evidence"
+      ],
+      "outputs": [
+        "evolution/decision.json",
+        "candidate validation or explicit observe/deferred outcome"
+      ],
+      "gates": []
+    },
+    "cache-final": {
+      "skill": "cache-run",
+      "phase": "final-checkpoint",
+      "when": "terminal-outcome",
+      "deps": [
+        {
+          "node": "reflection-closeout",
+          "requires": "terminal"
+        },
+        {
+          "node": "evolution",
+          "requires": "terminal"
+        },
+        {
+          "node": "dashboard",
+          "requires": "terminal"
+        }
+      ],
+      "inputs": [
+        "final lifecycle artifacts",
+        "actual closeout gate result"
+      ],
+      "outputs": [
+        "final durable checkpoint/index receipt or failure record"
+      ],
+      "gates": []
+    }
+  },
+  "gate_commands": {
+    "workflow-review": "python scripts/validate_workflow.py RUN_DIR --through review",
+    "workflow-publish": "python scripts/validate_workflow.py RUN_DIR --through publish",
+    "lifecycle-release": "python scripts/validate_lifecycle.py RUN_DIR --phase release"
+  },
+  "checkpoint_hook": {
+    "skill": "cache-run",
+    "phase": "stage-checkpoint",
+    "events": [
+      "accepted",
+      "not_applicable",
+      "blocked",
+      "failed",
+      "cancelled"
+    ],
+    "identity": [
+      "run_id",
+      "node_id",
+      "attempt",
+      "input_hashes"
+    ],
+    "blocks_next_node": false
+  },
+  "dispatch": {
+    "max_parallel": "available-agent-slots",
+    "fanout_limit": "remaining-agent-slots",
+    "join": "all-required-accepted",
+    "owner": "editorial-orchestrator",
+    "workers_launch_siblings": false
+  },
+  "invalidation": {
+    "rule": "changed input invalidates transitive consumers, their handoffs, reviews and cache keys",
+    "immutable_history": true,
+    "current_run_commit": "fixed",
+    "new_skill_commit": "next-invocation-only"
+  },
+  "outcome_contract": {
+    "field": "outcome",
+    "closeout_field": "run_outcome",
+    "mapping": {
+      "running": null,
+      "delivered": "delivered",
+      "no_selection_delivered": "no_selection_delivered",
+      "blocked": "blocked",
+      "interrupted": "interrupted",
+      "delivery_failed": "delivery_failed"
+    },
+    "evidence_field": "outcome_evidence_reference",
+    "closeout_evidence_field": "run_outcome_evidence_reference",
+    "cause_field": "outcome_reason"
+  }
+}
