@@ -25,7 +25,7 @@ Read [editing-rules.md](references/editing-rules.md). Make a short removal list 
 - Remove vehicle/window glare, utility poles, wires, and incidental crowds along the lower edge (차창 반사광·전봇대·전선·하단 단체관광객·군중 제거). Preserve the main subject in portraits, statues and their hands, and genuine water reflections.
 - Match one or two existing illustrations with restrained transparent watercolor and fine colored-pencil lines (절제된 투명 수채화·섬세한 색연필 선). Default to watercolor for landscapes and colored pencil for architectural or artifact details, while prioritizing the established style.
 - Keep tables, numbers, maps, and exhibition panels as `documentary-photo` assets to preserve their meaning.
-- Preserve the original composition, aspect ratio, perspective, and major architecture. Crop, restore the upper frame, or extend the sky only when requested (크롭·상단 복원·하늘 확장); record the extent and generated additions.
+- Preserve the original composition, aspect ratio, perspective, and major architecture by default. An explicit user request or subsequent explicit approval of a specific result may authorize a framing exception, including portrait-to-landscape reframing (세로 사진의 가로 구도 변경), cropping, or outpainting. Record the exact user instruction or approval, the original and final dimensions, the affected framing, and generated additions; do not infer blanket approval for other images. Keep architecture and factual details faithful even when reframing is authorized.
 
 ## 3. Perform visual edits
 
@@ -49,7 +49,7 @@ python scripts/optimize-images.py \
 ```
 
 - `--style`: `watercolor`, `colored-pencil`, or `documentary-photo`. Default candidate widths are 480/800/1200 px, with a **250,000-byte** limit per file. Neither output dimension may exceed the corresponding dimension of the original, generated image, or specified previous edit. Add the largest feasible width for small originals; never upscale.
-- For edits to an existing illustration, add `--edit-input /path/previous-edit.png`. Explicitly use `--framing outpaint` for requested frame extensions and `--framing crop` for crops. The default `preserve` mode rejects aspect-ratio deviations of 0.3% or more. Do not resize originals or misuse framing options to bypass checks.
+- For edits to an existing illustration, add `--edit-input /path/previous-edit.png`. Explicitly use `--framing outpaint` for requested frame extensions and `--framing crop` for crops. The default `preserve` mode rejects aspect-ratio deviations of 0.3% or more. For a user-authorized framing exception, select the truthful framing mode, record the specific approval and original/final dimensions, and use a narrowly scoped validation exception rather than bypassing all checks. Do not resize originals or misuse framing options to bypass checks.
 - Store the JSON output's `audit` separately in audit documentation; copy only necessary fields into the manifest. A generic `framingEdit: outpaint/crop` value does not automatically satisfy a project's narrower exceptions.
 - Do not overwrite existing files by default. Use `--overwrite` only for authorized replacements. If the size budget is exceeded even at the quality floor, resolve the cause instead of disabling checks.
 
@@ -59,6 +59,18 @@ python scripts/optimize-images.py \
 - Verify actual decoding, dimensions, aspect ratio, file size, metadata, and duplicates. Check mobile captions, overflow, `srcset`, and offline behavior. Distinguish desktop emulation from tests on an actual iPhone; never mark an unperformed test as passed.
 - Preserve actual prompts, tools, sources, generated additions, file hashes, and validation evidence in audit records. Briefly report original-to-asset mappings, storage locations, key edits, verification, and limitations.
 - Follow the user's authorization and repository instructions for saving, committing, pushing, PR creation, merging, and deployment. This skill grants no additional publishing authority. Do not unnecessarily reconfirm actions already authorized.
+
+## Canonical derivative filenames
+
+- For new Caucasus guide derivatives, use `caucasus-YYYYMMDD-place-subject-style-WIDTH.webp` (lowercase ASCII kebab-case) and `shared/public/illustrations/` unless the repository explicitly defines a different shared asset root. Use actual pixel width, the user-confirmed date, the correct destination, and `watercolor`, `pencil`, or `photo` (documentary) for the style token. Existing established filenames must not be renamed without a reference audit.
+- Group responsive widths under one stable logical illustration ID. Preserve uploaded filename as an intake alias and verified Git blob SHA/byte count, then verify SHA-256, decoding and dimensions before publishing or declaring a visual-cache hit. Rename or relocate an already uploaded derivative using its existing Git blob object when supported, without recompressing and without uploading an original.
+- Consult the destination repository's naming document, such as `shared/images/ASSET-NAMING.md`, and let its coordinating agent decide placements and record canonical lineage.
+
+## Publish through a separate skill
+
+- This skill owns image cleanup, illustration, optimization, hash calculation, provenance, and visual revision caching. It produces validated assets and a publication handoff; it does not implement GitHub transport, authentication, branch updates, or PR creation.
+- For repository publication, the coordinating agent invokes [publish-github-assets](../publish-github-assets/SKILL.md) with the approved derivative file, SHA-256, target repository path, base ref, and authorization scope. Do not send original photos or their encoded copies.
+- The publishing skill verifies transport availability and checks the remote result. If transport fails, keep the local approved artifact and its lineage; do not register a nonexistent published variant or claim a PR was created.
 
 ## Scoped revisions and deferred merge
 

@@ -7,7 +7,8 @@ A modular skill repository for investment research, travel-photo editing, and ch
 | Skill | Role |
 | --- | --- |
 | [discover-value-stocks](discover-value-stocks/SKILL.md) | An investment research orchestrator that connects independent subskills through a **skill graph**, managing dependencies, parallel execution, and validation gates. Coordinates growth-industry peer selection, forward FCF yield and CDS comparisons, Damodaran valuation, Korean report writing, review, publication, and subsequent assessment. |
-| [travel-photo-to-illustration](travel-photo-to-illustration/SKILL.md) | Converts travel photos into watercolor and colored-pencil illustrations (수채화·색연필화), optimizes mobile WebP assets, and integrates them into existing guides. Manages image caches, edit history, and parallel processing of photo batches. |
+| [travel-photo-to-illustration](travel-photo-to-illustration/SKILL.md) | Creates watercolor and colored-pencil illustrations (수채화·색연필화), optimizes WebP assets, and manages source hashes, edit history, caches, and batch work; delegates repository publication. |
+| [publish-github-assets](publish-github-assets/SKILL.md) | Publishes approved derivative assets and project files through verified GitHub app or authenticated Git transport; validates commits and PRs, and reports blocked binary transfers without false success claims. |
 | [chat-session-handoff](chat-session-handoff/SKILL.md) | Reconciles earlier handoff summaries with subsequent conversation, removes duplicates, and preserves decisions, work status, next actions, and a starter prompt for a new chat session (누적 대화 인계 요약). |
 
 ## Discover Value Stocks skill graph
