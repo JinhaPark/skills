@@ -1,4 +1,4 @@
 interface:
-  display_name: "여행 사진 일러스트 제작"
-  short_description: "여행 사진 정리부터 수채·색연필화 변환과 모바일 가이드 배치까지"
+  display_name: "Travel Photo to Illustration"
+  short_description: "Create watercolor and pencil art for mobile travel guides"
   default_prompt: "Use $travel-photo-to-illustration to clean these travel photos, convert them to watercolor or colored-pencil illustrations, optimize them for mobile, and integrate them into the existing guide."
