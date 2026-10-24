@@ -59,3 +59,9 @@ python scripts/optimize-images.py \
 - Verify actual decoding, dimensions, aspect ratio, file size, metadata, and duplicates. Check mobile captions, overflow, `srcset`, and offline behavior. Distinguish desktop emulation from tests on an actual iPhone; never mark an unperformed test as passed.
 - Preserve actual prompts, tools, sources, generated additions, file hashes, and validation evidence in audit records. Briefly report original-to-asset mappings, storage locations, key edits, verification, and limitations.
 - Follow the user's authorization and repository instructions for saving, committing, pushing, PR creation, merging, and deployment. This skill grants no additional publishing authority. Do not unnecessarily reconfirm actions already authorized.
+
+## Scoped revisions and deferred merge
+
+- Apply the repository README's scoped-work and deferred-merge policy. For small guide changes, batch related edits, check the affected diff/assets/behavior, and leave the PR open. Run the complete repository suite and required build/integration checks on the integrated result only when the user requests merging.
+- Reuse approved illustrations and valid check records after matching hashes and relevant dependencies. Caption, alt-text or placement changes do not require new artwork. Re-encode only when encoding inputs change; regenerate only when the requested visual edit changes.
+- Avoid unrelated whole-guide audits, repeated status polling and extra image variants. Preserve per-image validation for new or changed assets; defer broader regression checks to the merge stage. Parallel image workers can reduce elapsed time but do not guarantee lower credit use.
