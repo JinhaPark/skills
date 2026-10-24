@@ -38,6 +38,14 @@ Do not publish, change schedules or repositories, or launch sibling phases.
    Sequence selection, models, outline and dependent writing by their inputs.
 10. Reserve independent factual/calculation and editorial review work.
     Plan one integrated Markdown deliverable, not separate final reports.
+    Assign a reflection owner distinct from the editor and all report authors,
+    plus a different peer reviewer for any proposed workflow changes.
+    Start assess-track-record after history restore, parallel with industry work.
+    Plan cache checkpoints after every accepted stage and every exit outcome.
+    Preserve the nine research task IDs; use separate lifecycle artifacts for
+    assessment, reflection, cache receipts and evolution decisions.
+    Load prior validated improvements at bootstrap; freeze this invocation's
+    skill commit. Include interrupted-run recovery and pending assessments.
 11. If agents are unavailable, retain the same stages, artifacts and handoffs
     sequentially and record the limit; do not claim independent agent review.
 

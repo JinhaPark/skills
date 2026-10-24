@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "run_id": null,
+  "experiment_id": null,
+  "status": "deferred",
+  "current_run_commit": null,
+  "base_commit": null,
+  "candidate_commit": null,
+  "next_run_only": true,
+  "proposer_id": null,
+  "peer_reviewer_id": null,
+  "editor_id": null,
+  "affected_author_ids": [],
+  "trace_references": [],
+  "changes": [],
+  "discovery": [],
+  "checks": {
+    "invariants": {
+      "status": "not_run",
+      "task": null,
+      "evidence_reference": null,
+      "result": null,
+      "base_commit": null,
+      "candidate_commit": null,
+      "evidence_sha256": null
+    },
+    "regression": {
+      "status": "not_run",
+      "task": null,
+      "evidence_reference": null,
+      "result": null,
+      "base_commit": null,
+      "candidate_commit": null,
+      "evidence_sha256": null
+    },
+    "skill_validation": {
+      "status": "not_run",
+      "task": null,
+      "evidence_reference": null,
+      "result": null,
+      "base_commit": null,
+      "candidate_commit": null,
+      "evidence_sha256": null
+    },
+    "forward_test": {
+      "status": "not_run",
+      "task": null,
+      "evidence_reference": null,
+      "result": null,
+      "base_commit": null,
+      "candidate_commit": null,
+      "evidence_sha256": null,
+      "evaluator_id": null,
+      "task_artifacts": [],
+      "input_artifacts": [],
+      "produced_artifacts": [],
+      "baseline_comparison": null
+    }
+  },
+  "peer_assessment": {
+    "status": "not_run",
+    "evidence_references": [],
+    "unresolved_material_concerns": [],
+    "justification": null
+  },
+  "invariants_unchanged": false,
+  "checked_invariant_ids": [],
+  "promotion_receipt": null,
+  "rollback_commit": null,
+  "reason": "No candidate has been evaluated yet.",
+  "remaining_uncertainty": [],
+  "reflection_owner_id": null
+}

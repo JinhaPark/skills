@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reflect on Research"
+  short_description: "Independently assess reports and research failures"
+  default_prompt: "Use $reflect-research to assess this research run and its prior recommendation record."

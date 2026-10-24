@@ -10,7 +10,8 @@ description: Assemble reviewed sections into one complete Korean Markdown invest
 - Require explicit publication assignment from the orchestrator.
 - Read approved outline, complete sections, latest comparison/model basis, and both review lanes.
 - Read [editorial policy](../../references/editorial-policy.md), [quality policy](../../references/quality-policy.md), and [handoff contract](../../references/handoff-contract.md).
-- Read manifest, publication ledger, incoming handoffs, and the parent HPQ seed exclusion.
+- Read manifest, publication ledger, incoming handoffs, the parent HPQ seed exclusion,
+  and [assessment policy](../../references/assessment-policy.md).
 - Confirm all required stages passed at current versions by inspecting actual artifacts.
 - Refuse publication with unresolved material findings or missing required sections.
 
@@ -40,10 +41,22 @@ description: Assemble reviewed sections into one complete Korean Markdown invest
 - Use the available persistent file mechanism and existing supported delivery channel.
 - Do not post to JinhaPark/news, mix AI-news feeds, create Discord routing, or claim chat relocation.
 - Do not present scattered partial sections as the requested final deliverable.
+- During assembly, freeze `recommendation.json` using the assessment policy/template,
+  with original judgment, price basis, target dates, scenarios, benchmark and thesis
+  triggers. Link it to the exact report hash and invocation commit. For no_selection
+  record that status without inventing a stock recommendation.
+- Then obtain independent reflection on both the complete assembled report and
+  recommendation, including opening table and cover, and pass the lifecycle release
+  gate. A changed report or recommendation invalidates its reflection approval;
+  rerun affected review and reflection before delivery.
 - Return the actual report link and concise completion status.
 - Write the immutable pre-delivery `publication.json` with report ID, artifact path/version and ready status.
 - After observed delivery write a separate `delivery-receipt.json` with actual saved link/outcome; do not alter hashed pre-delivery artifacts.
 - Confirm actual artifact availability and supported delivery before ledger completion.
+- Link the immutable recommendation to the observed publication receipt. Keep
+  corrections as new versioned records; never rewrite the original forecast.
+- Return cache and delivery receipts to the reflection owner for closeout. The
+  current report remains frozen while any improvement candidate is evaluated.
 - Distinguish selected-company publication, no-selection report, blocked run, and interrupted delivery.
 - Do not add unconfirmed attempts to the completed-company exclusion set.
 

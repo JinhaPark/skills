@@ -1,0 +1,4 @@
+interface:
+  display_name: "Assess Research Track Record"
+  short_description: "Audit outcomes at original investment horizons"
+  default_prompt: "Use $assess-track-record to evaluate all published recommendations against their frozen horizons and investment theses."

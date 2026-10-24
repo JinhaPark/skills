@@ -11,3 +11,15 @@ Opening table, cover and body must use the same accepted data/model versions. Ev
 Never backfill plausible core numbers. A material unresolved gap lowers confidence or blocks publication; explain minor limitations and continue useful work. Missing distress-only inputs permit base DCF plus mandatory NA comparison, not invented adjustment. Save reproducible formulas/executable model and validation provenance. Gate-script success certifies record integrity only, not truth or actual delegation.
 
 Verify one complete report.md is durably available through the supported delivery channel. Keep full models, handoffs and reviews as internal checkpoints. Record completed-stock coverage only after actual delivery; distinguish no_selection, blocked and interrupted publication. Never claim file storage, external delivery or completed reviews without evidence.
+
+Before delivery require independent reflection on the final assembled report and
+original-horizon assessment of the full known publication cohort. Validate the
+report hash and current inputs; unresolved critical reflection findings block
+release. Missing legacy assessment inputs remain NA, not fabricated outcomes.
+Quality includes depth, coherence, source accuracy and calibration; investment
+returns are a separate noisy outcome measure.
+
+After all outcomes preserve cache receipts, reflection findings and the explicit
+evolution decision. Promote only peer-reviewed, regression-tested and fresh-context
+validated improvements for the next invocation. Preserve original reports, user
+constraints and existing destinations; verify rollback and honest capability limits.

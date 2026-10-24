@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cache Research Run"
+  short_description: "Persist and validate reusable research checkpoints"
+  default_prompt: "Use $cache-run to checkpoint this research stage and validate any reusable prior artifacts."

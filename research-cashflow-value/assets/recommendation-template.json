@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "report_id": null,
+  "entity_id": null,
+  "share_class": null,
+  "original_snapshot_available": true,
+  "publication_status": "ready",
+  "publication_at": null,
+  "report_reference": null,
+  "frozen_report_sha256": null,
+  "skill_commit": null,
+  "recommendation": null,
+  "base_currency": null,
+  "entry_convention": "publication_reference",
+  "entry_rule": null,
+  "entry": null,
+  "reference_entry": null,
+  "target_horizon": {
+    "end_date": null,
+    "exchange_timezone": null,
+    "market_close_rule": "first_session_on_or_after",
+    "reason": null
+  },
+  "return_convention": {
+    "dividends": "cash_received_not_reinvested",
+    "tax": "pre_tax",
+    "fx": "actual_receipt_date_for_distributions",
+    "terminal_proceeds": "hold_cash_without_interest_to_original_horizon"
+  },
+  "benchmark": null,
+  "expected_return": null,
+  "scenarios": [],
+  "thesis_narrative": null,
+  "thesis_criteria": [],
+  "catalysts": [],
+  "unavailable_fields": []
+}

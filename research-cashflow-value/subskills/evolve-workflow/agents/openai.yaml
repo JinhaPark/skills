@@ -1,0 +1,4 @@
+interface:
+  display_name: "Evolve Research Workflow"
+  short_description: "Validate and promote evidence-based skill improvements"
+  default_prompt: "Use $evolve-workflow to turn accepted reflection findings into tested improvements for the next research run."

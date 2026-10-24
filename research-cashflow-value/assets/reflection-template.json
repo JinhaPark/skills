@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "checkpoint": "prepublish",
+  "run_id": null,
+  "status": "blocked",
+  "mode": "independent",
+  "reviewer_id": null,
+  "editor_id": null,
+  "author_ids": [],
+  "trace_reference": null,
+  "input_versions": {
+    "data": 0,
+    "model": 0
+  },
+  "reviewed_artifacts": [],
+  "dimensions": {
+    "accuracy": {
+      "status": "not_assessable",
+      "evidence_references": [],
+      "limitations": [
+        "Not assessed yet."
+      ]
+    },
+    "completeness": {
+      "status": "not_assessable",
+      "evidence_references": [],
+      "limitations": [
+        "Not assessed yet."
+      ]
+    },
+    "reasoning": {
+      "status": "not_assessable",
+      "evidence_references": [],
+      "limitations": [
+        "Not assessed yet."
+      ]
+    },
+    "coherence": {
+      "status": "not_assessable",
+      "evidence_references": [],
+      "limitations": [
+        "Not assessed yet."
+      ]
+    },
+    "calibration": {
+      "status": "not_assessable",
+      "evidence_references": [],
+      "limitations": [
+        "Not assessed yet."
+      ]
+    },
+    "outcome_assessment": {
+      "status": "not_assessable",
+      "evidence_references": [],
+      "limitations": [
+        "Not assessed yet."
+      ]
+    },
+    "workflow_reliability": {
+      "status": "not_assessable",
+      "evidence_references": [],
+      "limitations": [
+        "Not assessed yet."
+      ]
+    }
+  },
+  "findings": [],
+  "unresolved_critical": null,
+  "publication_gate": "blocked",
+  "assessment_reference": null,
+  "assessment_sha256": null,
+  "assessment_unavailable_reason": "Not loaded yet.",
+  "limitations": []
+}

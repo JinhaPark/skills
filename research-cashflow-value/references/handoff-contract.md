@@ -1,6 +1,6 @@
 # Stage artifacts and handoffs
 
-Use one run directory per report. Resolve its persistent storage reference during planning and record the actual retrieval method/URI, never an invented Library ID. The reusable skill contains no live run state. Never commit research or delivery state into the skill repository without separate authorization.
+Use one run directory per report. Resolve its persistent storage reference during planning and record the actual retrieval method/URI, never an invented Library ID. The reusable skill contains no live run state. Never commit private research, cache, publication or assessment state into the skill repository. The authorized evolution stage may commit reviewed workflow code and synthetic regression fixtures only.
 
 ## Ownership and evidence
 
@@ -35,3 +35,26 @@ decision is selected/no_selection/blocked. Only model may be not_applicable, onl
 Use research/industry.md, research/pool.json, research/peer-evidence.json, data.json, selection.json, model.json when applicable, outline.json, sections/*.md, reviews/*.json, handoffs/*.json and report.md. Add entity/section identifiers as needed and register exact paths. Keep task artifacts immutable once accepted; create a new version instead of overwriting an upstream artifact.
 
 report.md is the sole user-facing deliverable. Keep the rest as internal durable evidence/checkpoints. Preserve source links/calculations in the report where useful. After actual delivery set delivery.status=delivered and report_reference to the observed saved report link; before delivery use ready/pending. A gate never certifies external delivery or financial truth automatically.
+
+## Lifecycle sidecars
+
+Keep the nine-stage manifest compatible. Assessment runs after plan in parallel
+with industry and finishes before prepublication reflection. Prepublication
+reflection reviews the assembled report before delivery, so it is not a dependency
+of the publish assembly task itself. Any assembled-report change invalidates that
+approval. Run the independent lifecycle release gate before external delivery.
+
+Cache checkpoints cover every invocation, accepted stage and exit, with real
+provider receipts and content hashes; follow cache-policy.md. Persist the cache
+index only after its referenced objects. A local snapshot is not durable storage.
+Keep a stable run ID for a retried scheduled run and distinct attempt/checkpoint
+IDs; reconcile actual delivered receipts before any retry to avoid duplicate
+delivery. New weekly runs receive new IDs and refreshed market observations.
+
+Use assessment/track-record.json for the full known publication cohort; retain
+legacy missing-data rows. Store immutable recommendation.json before delivery,
+then link the real delivery receipt. Store reviews/reflection-prepublish.json,
+reflection/closeout.json and evolution/decision.json using their documented
+contracts. Keep actual role IDs and invocation provenance; summaries never claim
+independence in place of runtime agent evidence. Evolution may be deferred;
+publication must not falsely imply the skill was successfully updated.

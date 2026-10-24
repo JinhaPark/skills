@@ -1,4 +1,4 @@
 interface:
   display_name: "Cash Flow Value Research"
-  short_description: "Orchestrate evidence-based cash flow equity research"
-  default_prompt: "Use $research-cashflow-value to research a growth industry and deliver one verified Korean investment report."
+  short_description: "Research equities with caching and independent reflection"
+  default_prompt: "Use $research-cashflow-value to research a growth industry and deliver one verified Korean report with cached stages, historical assessment, independent reflection, and tested next-run improvements."
