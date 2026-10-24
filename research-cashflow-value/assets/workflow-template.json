@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "run_id": "REPLACE_WITH_ACTUAL_RUN_ID",
+  "skill_version": null,
+  "repository_commit": null,
+  "persistent_root": null,
+  "ledger_reference": null,
+  "decision": "blocked",
+  "versions": {
+    "data": 0,
+    "model": 0
+  },
+  "tasks": {
+    "plan": {
+      "status": "pending",
+      "deps": [],
+      "input_versions": {},
+      "artifacts": [],
+      "handoff": null,
+      "handoff_sha256": null
+    },
+    "industry": {
+      "status": "pending",
+      "deps": [
+        "plan"
+      ],
+      "input_versions": {},
+      "artifacts": [],
+      "handoff": null,
+      "handoff_sha256": null
+    },
+    "peers": {
+      "status": "pending",
+      "deps": [
+        "industry"
+      ],
+      "input_versions": {},
+      "artifacts": [],
+      "handoff": null,
+      "handoff_sha256": null
+    },
+    "selection": {
+      "status": "pending",
+      "deps": [
+        "peers"
+      ],
+      "input_versions": {},
+      "artifacts": [],
+      "handoff": null,
+      "handoff_sha256": null
+    },
+    "model": {
+      "status": "pending",
+      "deps": [
+        "selection"
+      ],
+      "input_versions": {},
+      "artifacts": [],
+      "handoff": null,
+      "handoff_sha256": null
+    },
+    "outline": {
+      "status": "pending",
+      "deps": [
+        "model"
+      ],
+      "input_versions": {},
+      "artifacts": [],
+      "handoff": null,
+      "handoff_sha256": null
+    },
+    "writing": {
+      "status": "pending",
+      "deps": [
+        "outline"
+      ],
+      "input_versions": {},
+      "artifacts": [],
+      "handoff": null,
+      "handoff_sha256": null
+    },
+    "review": {
+      "status": "pending",
+      "deps": [
+        "writing"
+      ],
+      "input_versions": {},
+      "artifacts": [],
+      "handoff": null,
+      "handoff_sha256": null
+    },
+    "publish": {
+      "status": "pending",
+      "deps": [
+        "review"
+      ],
+      "input_versions": {},
+      "artifacts": [],
+      "handoff": null,
+      "handoff_sha256": null
+    }
+  },
+  "review": {
+    "passed": false,
+    "unresolved_critical": null
+  },
+  "delivery": {
+    "status": "pending",
+    "report_reference": null
+  }
+}

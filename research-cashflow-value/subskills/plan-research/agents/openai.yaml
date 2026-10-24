@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan Research"
+  short_description: "Execute a delegated cash flow research stage"
+  default_prompt: "Use $plan-research to complete the assigned research stage."

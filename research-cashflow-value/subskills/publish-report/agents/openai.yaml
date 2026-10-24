@@ -1,0 +1,4 @@
+interface:
+  display_name: "Publish Report"
+  short_description: "Execute a delegated cash flow research stage"
+  default_prompt: "Use $publish-report to complete the assigned research stage."

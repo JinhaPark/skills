@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Section"
+  short_description: "Execute a delegated cash flow research stage"
+  default_prompt: "Use $write-section to complete the assigned research stage."

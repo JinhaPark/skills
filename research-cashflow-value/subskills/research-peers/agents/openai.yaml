@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Peers"
+  short_description: "Execute a delegated cash flow research stage"
+  default_prompt: "Use $research-peers to complete the assigned research stage."

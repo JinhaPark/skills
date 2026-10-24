@@ -1,0 +1,4 @@
+interface:
+  display_name: "Outline Report"
+  short_description: "Execute a delegated cash flow research stage"
+  default_prompt: "Use $outline-report to complete the assigned research stage."

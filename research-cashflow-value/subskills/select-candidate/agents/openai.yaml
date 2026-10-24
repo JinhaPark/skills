@@ -1,0 +1,4 @@
+interface:
+  display_name: "Select Candidate"
+  short_description: "Execute a delegated cash flow research stage"
+  default_prompt: "Use $select-candidate to complete the assigned research stage."

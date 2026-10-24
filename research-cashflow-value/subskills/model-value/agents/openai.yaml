@@ -1,0 +1,4 @@
+interface:
+  display_name: "Model Value"
+  short_description: "Execute a delegated cash flow research stage"
+  default_prompt: "Use $model-value to complete the assigned research stage."

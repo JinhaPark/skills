@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cash Flow Value Research"
+  short_description: "Orchestrate evidence-based cash flow equity research"
+  default_prompt: "Use $research-cashflow-value to research a growth industry and deliver one verified Korean investment report."
