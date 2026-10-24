@@ -60,6 +60,12 @@ python scripts/optimize-images.py \
 - Preserve actual prompts, tools, sources, generated additions, file hashes, and validation evidence in audit records. Briefly report original-to-asset mappings, storage locations, key edits, verification, and limitations.
 - Follow the user's authorization and repository instructions for saving, committing, pushing, PR creation, merging, and deployment. This skill grants no additional publishing authority. Do not unnecessarily reconfirm actions already authorized.
 
+## Canonical derivative filenames
+
+- For new Caucasus guide derivatives, use `caucasus-YYYYMMDD-place-subject-style-WIDTH.webp` (lowercase ASCII kebab-case) and `shared/public/illustrations/` unless the repository explicitly defines a different shared asset root. Use actual pixel width, the user-confirmed date, the correct destination, and `watercolor`, `pencil`, or `photo` (documentary) for the style token. Existing established filenames must not be renamed without a reference audit.
+- Group responsive widths under one stable logical illustration ID. Preserve uploaded filename as an intake alias and verified Git blob SHA/byte count, then verify SHA-256, decoding and dimensions before publishing or declaring a visual-cache hit. Rename or relocate an already uploaded derivative using its existing Git blob object when supported, without recompressing and without uploading an original.
+- Consult the destination repository's naming document, such as `shared/images/ASSET-NAMING.md`, and let its coordinating agent decide placements and record canonical lineage.
+
 ## Publish through a separate skill
 
 - This skill owns image cleanup, illustration, optimization, hash calculation, provenance, and visual revision caching. It produces validated assets and a publication handoff; it does not implement GitHub transport, authentication, branch updates, or PR creation.
