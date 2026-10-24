@@ -1,15 +1,15 @@
 ---
-name: context-handoff
+name: chat-session-handoff
 description: Create cumulative, deduplicated conversation handoffs for continuing long ChatGPT chats across sessions, including iPhone.
 ---
 
-# Context Handoff
+# Chat Session Handoff
 
 ## Purpose
 Produce a compact, cumulative, copy-ready handoff that preserves decisions and work state across ChatGPT sessions. Combine previous handoff summaries with newer messages; do not merely summarize the latest session.
 
 ## When to use
-- User asks for "인계 요약", "컨텍스트 정리", "context-handoff", or continuation in a new chat.
+- User asks for "인계 요약", "컨텍스트 정리", "chat-session-handoff", or continuation in a new chat.
 - If a reliable context-usage indicator explicitly reports at least 90%, suggest preparing a handoff.
 - **Limitation:** In ordinary ChatGPT chats, exact context-window utilization is not exposed. Do not claim to detect 90% automatically, run unattended, or trigger while the iPhone app is closed. User invocation is the reliable fallback.
 

@@ -1,0 +1,30 @@
+# Workflow template stored with discover-value-stocks.
+# GitHub Actions does not discover this nested path. To enable repository CI,
+# copy this file to the repository-root .github/workflows directory.
+name: DCF regression tests
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: discover-value-stocks
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run DCF regression tests
+        run: python -m unittest discover -s subskills/data/distress-adjusted-dcf/tests -v
+      - name: Run research workflow and dashboard tests
+        run: python -m unittest discover -s tests -v
+      - name: Check README dashboard matches the public record
+        run: python scripts/render_dashboard.py subskills/data/cashflow-dashboard.json subskills/data/README.md --check
